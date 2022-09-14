@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:my_music/config/colors.dart';
+import 'package:my_music/view/intro/v_profile.dart';
 import 'package:my_music/view/v_home.dart';
 import 'package:my_music/config/themes.dart';
 
@@ -18,12 +20,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: MyTheme.lightTheme,
       darkTheme: MyTheme.darkTheme,
       themeMode: ThemeMode.system,
-      home: const MyHomePage(),
+      getPages: [
+        GetPage(
+          name: '/',
+          page: () => const MyHomePage(),
+          transition: Transition.downToUp,
+        ),
+        GetPage(
+          name: '/profile',
+          page: () => const ProfileView(),
+          transition: Transition.downToUp,
+        ),
+      ],
+      // home: const MyHomePage(),
     );
   }
 }

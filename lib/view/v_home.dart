@@ -4,6 +4,7 @@ import 'package:my_music/component/tab_item.dart';
 import 'package:my_music/config/colors.dart';
 import 'package:my_music/config/home_obs.dart';
 import 'package:my_music/view/home/v_beranda.dart';
+import 'package:my_music/view/home/v_koleksi.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -18,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const BerandaView(),
     Container(child: const Text("Shorts")),
     Container(child: const Text("Subscribtion")),
-    Container(child: const Text("Koleksi")),
+    const KoleksiView(),
   ];
 
   @override
