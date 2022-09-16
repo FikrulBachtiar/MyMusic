@@ -6,6 +6,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:my_music/component/behavior.dart';
 import 'package:my_music/config/beranda_obs.dart';
 import 'package:my_music/config/colors.dart';
+import 'package:my_music/config/shared_preference.dart';
 import 'package:my_music/model/m_video_list.dart';
 import 'package:my_music/service/s_beranda.dart';
 
@@ -18,6 +19,7 @@ class BerandaView extends StatefulWidget {
 
 class _BerandaViewState extends State<BerandaView> {
   BerandaObs served = Get.put(BerandaObs());
+  SharedPreferenceConfig shared = SharedPreferenceConfig();
   final _googleSignIn = GoogleSignIn();
   final PagingController<int, Item> _pagingController =
       PagingController(firstPageKey: 0);
@@ -37,12 +39,14 @@ class _BerandaViewState extends State<BerandaView> {
     super.dispose();
   }
 
-  fetchPage(int page) {
+  fetchPage(int page) async {
+    String accessToken = await shared.getAccessToken();
     BerandaService()
         .getVideoList(
       maxResults: served.sizeList.value,
       pageToken: served.pageToken.value,
       videoCategoryId: served.videoCategoryId.value.toString(),
+      accessToken: accessToken,
     )
         .then(
       (res) {

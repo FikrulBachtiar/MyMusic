@@ -6,21 +6,21 @@ class ProfileObs extends GetxController {
 
   @override
   void onInit() {
+    everAll([username, photoUrl, emails], (callback) {
+      shared.setName(username.value);
+      shared.setPhotoUrl(photoUrl.value);
+      shared.setEmail(emails.value);
+    });
     super.onInit();
     init();
-    everAll([username, photoUrl, emails], (callback) {
-      shared.setName(username.toString());
-      shared.setPhotoUrl(photoUrl.toString());
-      shared.setEmail(emails.toString());
-    });
   }
 
   init() async {
-    var names = await shared.getName();
-    var photo = await shared.getPhotoUrl();
-    var email = await shared.getEmail();
+    String? names = await shared.getName();
+    String? photo = await shared.getPhotoUrl();
+    String? email = await shared.getEmail();
     username.value = names == '' ? 'Pengguna' : names;
-    photoUrl.value = photo;
+    photoUrl.value = "";
     emails.value = email;
   }
 

@@ -9,6 +9,7 @@ class MyTheme extends GetxController {
     bottomAppBarColor: const Color.fromRGBO(33, 33, 33, 1),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color.fromRGBO(33, 33, 33, 1),
+      elevation: 0,
     ),
     backgroundColor: const Color.fromRGBO(33, 33, 33, 1),
   );

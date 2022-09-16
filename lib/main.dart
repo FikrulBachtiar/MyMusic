@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:my_music/config/colors.dart';
 import 'package:my_music/view/intro/v_profile.dart';
+import 'package:my_music/view/koleksi/v_histori.dart';
 import 'package:my_music/view/v_home.dart';
 import 'package:my_music/config/themes.dart';
 
@@ -20,24 +21,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: MyTheme.lightTheme,
-      darkTheme: MyTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      getPages: [
-        GetPage(
-          name: '/',
-          page: () => const MyHomePage(),
-          transition: Transition.downToUp,
-        ),
-        GetPage(
-          name: '/profile',
-          page: () => const ProfileView(),
-          transition: Transition.downToUp,
-        ),
-      ],
-      // home: const MyHomePage(),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: MyTheme.lightTheme,
+        darkTheme: MyTheme.darkTheme,
+        themeMode: ThemeMode.system,
+        getPages: [
+          GetPage(
+            name: '/',
+            page: () => const MyHomePage(),
+            transition: Transition.downToUp,
+          ),
+          GetPage(
+            name: '/profile',
+            page: () => const ProfileView(),
+            transition: Transition.downToUp,
+          ),
+          GetPage(
+            name: '/history',
+            page: () => const HistoriView(),
+            transition: Transition.fadeIn,
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
+        ],
+        // home: const MyHomePage(),
+      ),
     );
   }
 }

@@ -18,3 +18,4 @@ const kFontTitleSnippet = Color.fromRGBO(254, 254, 254, 1);
 const kFontDuration = Color.fromRGBO(255, 255, 255, 1);
 const kFontProfile = Color.fromRGBO(255, 255, 255, 1);
 const kFontSubtitleProfile = Color.fromRGBO(119, 119, 119, 1);
+const kTextFieldHistori = Color.fromRGBO(24, 24, 24, 1);

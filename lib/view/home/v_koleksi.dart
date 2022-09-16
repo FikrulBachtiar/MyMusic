@@ -141,7 +141,9 @@ class _KoleksiViewState extends State<KoleksiView> {
                 Column(
                   children: [
                     RowList(
-                      ontap: () {},
+                      ontap: () {
+                        Get.toNamed('/history');
+                      },
                       text: "Histori",
                       icon: const Icon(CupertinoIcons.time),
                     ),

@@ -1,6 +1,14 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceConfig {
+  Future<void> resetProfile() async {
+    SharedPreferences shared = await SharedPreferences.getInstance();
+    await shared.setString('accessToken', "");
+    await shared.setString('username', "");
+    await shared.setString('photo_url', "");
+    await shared.setString('email', "");
+  }
+
   Future<void> setAccessToken(String? value) async {
     SharedPreferences shared = await SharedPreferences.getInstance();
     await shared.setString('accessToken', value ?? "");
@@ -29,7 +37,7 @@ class SharedPreferenceConfig {
     return;
   }
 
-  Future<String> getPhotoUrl() async {
+  Future<String?> getPhotoUrl() async {
     SharedPreferences shared = await SharedPreferences.getInstance();
     return shared.getString('photo_url') ?? "";
   }

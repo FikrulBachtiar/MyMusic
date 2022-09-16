@@ -49,12 +49,22 @@ android {
             storeFile file('upload-keystore.jks')
             storePassword 'listantofikrul1'
         }
+
+        // release {
+        //     keyAlias 'upload'
+        //     keyPassword 'listantofikrul1'
+        //     storeFile file('upload-keystore.jks')
+        //     storePassword 'listantofikrul1'
+        // }
     }
 
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
+        // release {
+        //     signingConfig signingConfigs.release
+        // }
     }
 }
 
