@@ -159,12 +159,16 @@ class _KoleksiViewState extends State<KoleksiView> {
                       icon: const Icon(CupertinoIcons.arrow_down_to_line_alt),
                     ),
                     RowList(
-                      ontap: () {},
+                      ontap: () {
+                        Get.toNamed('/film-anda');
+                      },
                       text: "Film Anda",
                       icon: const Icon(CupertinoIcons.film),
                     ),
                     RowList(
-                      ontap: () {},
+                      ontap: () {
+                        Get.toNamed('/tonton-nanti');
+                      },
                       text: "Tonton nanti",
                       subtitle: "38 video belum ditonton",
                       icon: const Icon(CupertinoIcons.clock),

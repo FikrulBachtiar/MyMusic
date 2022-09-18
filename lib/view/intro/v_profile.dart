@@ -99,7 +99,7 @@ class _ProfileViewState extends State<ProfileView> {
                                   borderRadius: BorderRadius.circular(50),
                                   child: served.photoUrl.value == ''
                                       ? Image.asset(
-                                          'assets/profile.jpg',
+                                          'assets/question.png',
                                           width: 40,
                                           height: 40,
                                           fit: BoxFit.cover,

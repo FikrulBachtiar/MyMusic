@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:my_music/config/colors.dart';
 import 'package:my_music/view/intro/v_profile.dart';
+import 'package:my_music/view/koleksi/v_film_anda.dart';
 import 'package:my_music/view/koleksi/v_histori.dart';
+import 'package:my_music/view/koleksi/v_tonton_nanti.dart';
 import 'package:my_music/view/v_home.dart';
 import 'package:my_music/config/themes.dart';
 
@@ -42,6 +44,18 @@ class MyApp extends StatelessWidget {
           GetPage(
             name: '/history',
             page: () => const HistoriView(),
+            transition: Transition.fadeIn,
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
+          GetPage(
+            name: '/tonton-nanti',
+            page: () => const TontonNantiView(),
+            transition: Transition.fadeIn,
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
+          GetPage(
+            name: '/film-anda',
+            page: () => const FilmAndaView(),
             transition: Transition.fadeIn,
             transitionDuration: const Duration(milliseconds: 300),
           ),
