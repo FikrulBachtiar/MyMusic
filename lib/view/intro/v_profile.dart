@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,12 +43,11 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print(served.photoUrl.value);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Get.back();
+            AutoRouter.of(context).navigateBack();
           },
           icon: const Icon(
             CupertinoIcons.xmark,

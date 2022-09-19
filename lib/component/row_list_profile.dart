@@ -9,12 +9,14 @@ class RowList extends StatelessWidget {
     this.textColor,
     required this.icon,
     required this.ontap,
+    this.iconTwo,
   }) : super(key: key);
   final String text;
   final Widget icon;
   final VoidCallback ontap;
   final String? subtitle;
   final Color? textColor;
+  final Widget? iconTwo;
 
   @override
   Widget build(BuildContext context) {
@@ -27,31 +29,38 @@ class RowList extends StatelessWidget {
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            icon,
-            const SizedBox(width: 27),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: 16.5,
-                    color: textColor ?? kFontProfile,
-                  ),
-                ),
-                subtitle == null ? Container() : const SizedBox(height: 2),
-                subtitle == null
-                    ? Container()
-                    : Text(
-                        subtitle ?? "",
-                        style: const TextStyle(
-                          fontSize: 13.5,
-                          color: kFontSubtitleProfile,
-                        ),
+                icon,
+                const SizedBox(width: 27),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      text,
+                      style: TextStyle(
+                        fontSize: 16.5,
+                        color: textColor ?? kFontProfile,
                       ),
+                    ),
+                    subtitle == null ? Container() : const SizedBox(height: 2),
+                    subtitle == null
+                        ? Container()
+                        : Text(
+                            subtitle ?? "",
+                            style: const TextStyle(
+                              fontSize: 13.5,
+                              color: kFontSubtitleProfile,
+                            ),
+                          ),
+                  ],
+                ),
               ],
             ),
+            iconTwo ?? Container(),
           ],
         ),
       ),

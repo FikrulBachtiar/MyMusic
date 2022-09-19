@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:my_music/component/behavior.dart';
 import 'package:my_music/config/beranda_obs.dart';
 import 'package:my_music/config/colors.dart';
+import 'package:my_music/config/routes.gr.dart';
 import 'package:my_music/config/shared_preference.dart';
 import 'package:my_music/model/m_video_list.dart';
 import 'package:my_music/service/s_beranda.dart';
@@ -206,7 +208,7 @@ class _BerandaViewState extends State<BerandaView> {
                   backgroundColor: kTransparent,
                   child: InkWell(
                     onTap: () {
-                      Get.toNamed('/profile', preventDuplicates: false);
+                      AutoRouter.of(context).push(const ProfileRoute());
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(50),

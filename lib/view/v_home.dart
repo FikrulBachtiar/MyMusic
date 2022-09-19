@@ -1,10 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:my_music/component/tab_item.dart';
 import 'package:my_music/config/colors.dart';
-import 'package:my_music/config/home_obs.dart';
-import 'package:my_music/view/home/v_beranda.dart';
-import 'package:my_music/view/home/v_koleksi.dart';
+import 'package:my_music/config/routes.gr.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -14,20 +12,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  HomeObs served = Get.put(HomeObs());
-  final screen = [
-    const BerandaView(),
-    Container(child: const Text("Shorts")),
-    Container(child: const Text("Subscribtion")),
-    const KoleksiView(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Obx(() => screen[served.selectedIndex.value]),
-      bottomNavigationBar: Obx(
-        () => BottomAppBar(
+    Size size = MediaQuery.of(context).size;
+    return AutoTabsScaffold(
+      routes: const [
+        BerandaRoute(),
+        ShortsRoute(),
+        SubscriptionRoute(),
+        KoleksiRoute(),
+      ],
+      bottomNavigationBuilder: (context, tabsRouter) {
+        return BottomAppBar(
           elevation: 0,
           child: Container(
             decoration: const BoxDecoration(
@@ -44,15 +40,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: TabItemComponent(
                     text: "Beranda",
                     sizeIcon: 26,
-                    icon: served.selectedIndex.value == 0
+                    icon: tabsRouter.activeIndex == 0
                         ? Icons.home
                         : Icons.home_outlined,
                     colorText: kBottomAppBarButton,
-                    isActive: served.selectedIndex.value == 0 ? true : false,
+                    isActive: tabsRouter.activeIndex == 0 ? true : false,
                     onTap: () {
-                      if (served.selectedIndex.value != 0) {
-                        served.changeCurrentIndex(0);
-                      }
+                      tabsRouter.setActiveIndex(0);
                     },
                   ),
                 ),
@@ -60,15 +54,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: TabItemComponent(
                     text: "Shorts",
                     sizeIcon: 26,
-                    icon: served.selectedIndex.value == 1
+                    icon: tabsRouter.activeIndex == 1
                         ? Icons.filter_5
                         : Icons.filter_5_outlined,
                     colorText: kBottomAppBarButton,
-                    isActive: served.selectedIndex.value == 1 ? true : false,
+                    isActive: tabsRouter.activeIndex == 1 ? true : false,
                     onTap: () {
-                      if (served.selectedIndex.value != 1) {
-                        served.changeCurrentIndex(1);
-                      }
+                      tabsRouter.setActiveIndex(1);
                     },
                   ),
                 ),
@@ -95,15 +87,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: TabItemComponent(
                     text: "Subscription",
                     sizeIcon: 26,
-                    icon: served.selectedIndex.value == 2
+                    icon: tabsRouter.activeIndex == 2
                         ? Icons.subscriptions
                         : Icons.subscriptions_outlined,
                     colorText: kBottomAppBarButton,
-                    isActive: served.selectedIndex.value == 2 ? true : false,
+                    isActive: tabsRouter.activeIndex == 2 ? true : false,
                     onTap: () {
-                      if (served.selectedIndex.value != 2) {
-                        served.changeCurrentIndex(2);
-                      }
+                      tabsRouter.setActiveIndex(2);
                     },
                   ),
                 ),
@@ -111,23 +101,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: TabItemComponent(
                     text: "Koleksi",
                     sizeIcon: 26,
-                    icon: served.selectedIndex.value == 3
+                    icon: tabsRouter.activeIndex == 3
                         ? Icons.video_library
                         : Icons.video_library_outlined,
                     colorText: kBottomAppBarButton,
-                    isActive: served.selectedIndex.value == 3 ? true : false,
+                    isActive: tabsRouter.activeIndex == 3 ? true : false,
                     onTap: () {
-                      if (served.selectedIndex.value != 3) {
-                        served.changeCurrentIndex(3);
-                      }
+                      tabsRouter.setActiveIndex(3);
                     },
                   ),
                 ),
               ],
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

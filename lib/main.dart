@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:my_music/config/colors.dart';
-import 'package:my_music/view/intro/v_profile.dart';
-import 'package:my_music/view/koleksi/v_film_anda.dart';
-import 'package:my_music/view/koleksi/v_histori.dart';
-import 'package:my_music/view/koleksi/v_tonton_nanti.dart';
-import 'package:my_music/view/v_home.dart';
+import 'package:my_music/config/routes.gr.dart';
 import 'package:my_music/config/themes.dart';
 
 void main() {
@@ -15,53 +10,26 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: kTransparent),
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  MyApp({super.key});
+  final _appRouter = AppRouter();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: GetMaterialApp(
+      child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
+        routerDelegate: _appRouter.delegate(),
+        routeInformationParser: _appRouter.defaultRouteParser(),
         theme: MyTheme.lightTheme,
         darkTheme: MyTheme.darkTheme,
         themeMode: ThemeMode.system,
-        getPages: [
-          GetPage(
-            name: '/',
-            page: () => const MyHomePage(),
-            transition: Transition.downToUp,
-          ),
-          GetPage(
-            name: '/profile',
-            page: () => const ProfileView(),
-            transition: Transition.downToUp,
-          ),
-          GetPage(
-            name: '/history',
-            page: () => const HistoriView(),
-            transition: Transition.fadeIn,
-            transitionDuration: const Duration(milliseconds: 300),
-          ),
-          GetPage(
-            name: '/tonton-nanti',
-            page: () => const TontonNantiView(),
-            transition: Transition.fadeIn,
-            transitionDuration: const Duration(milliseconds: 300),
-          ),
-          GetPage(
-            name: '/film-anda',
-            page: () => const FilmAndaView(),
-            transition: Transition.fadeIn,
-            transitionDuration: const Duration(milliseconds: 300),
-          ),
-        ],
-        // home: const MyHomePage(),
       ),
     );
   }
 }
+
+// flutter pub run build_runner build --delete-conflicting-outputs
