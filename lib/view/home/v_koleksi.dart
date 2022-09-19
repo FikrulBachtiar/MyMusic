@@ -117,53 +117,59 @@ class _KoleksiViewState extends State<KoleksiView> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  SizedBox(
-                    width: size.width,
-                    height: size.height * .18,
-                    child: ScrollConfiguration(
-                      behavior: BehaviorComponent(),
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            child: Container(
-                              margin: index == 0
-                                  ? const EdgeInsets.only(left: 20)
-                                  : index == 19
-                                      ? const EdgeInsets.only(right: 20)
-                                      : null,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl:
-                                        "https://i.ytimg.com/vi/lg2cdA2BglE/mqdefault.jpg",
-                                    height: 90,
-                                    width: 160,
-                                    fit: BoxFit.fill,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const SizedBox(
-                                    width: 160,
-                                    child: Text(
-                                      "1 hit = 5 Slandar bash charges [OMEGA BASH!]",
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 14.5,
+                  Obx(
+                    () => SizedBox(
+                      width: size.width,
+                      height:
+                          served.dataHistory.isEmpty ? null : size.height * .18,
+                      child: served.dataHistory.isEmpty
+                          ? Container()
+                          : ScrollConfiguration(
+                              behavior: BehaviorComponent(),
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    child: Container(
+                                      margin: index == 0
+                                          ? const EdgeInsets.only(left: 20)
+                                          : index == 19
+                                              ? const EdgeInsets.only(right: 20)
+                                              : null,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                "https://i.ytimg.com/vi/lg2cdA2BglE/mqdefault.jpg",
+                                            height: 90,
+                                            width: 160,
+                                            fit: BoxFit.fill,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          const SizedBox(
+                                            width: 160,
+                                            child: Text(
+                                              "1 hit = 5 Slandar bash charges [OMEGA BASH!]",
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 14.5,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return const SizedBox(width: 15);
+                                },
+                                itemCount: served.dataHistory.length,
                               ),
                             ),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(width: 15);
-                        },
-                        itemCount: 20,
-                      ),
                     ),
                   ),
                 ],
@@ -277,3 +283,55 @@ class _KoleksiViewState extends State<KoleksiView> {
     );
   }
 }
+
+
+// SizedBox(
+//                     width: size.width,
+//                     height: size.height * .18,
+//                     child: ScrollConfiguration(
+//                       behavior: BehaviorComponent(),
+//                       child: ListView.separated(
+//                         scrollDirection: Axis.horizontal,
+//                         itemBuilder: (context, index) {
+//                           return InkWell(
+//                             child: Container(
+//                               margin: index == 0
+//                                   ? const EdgeInsets.only(left: 20)
+//                                   : index == 19
+//                                       ? const EdgeInsets.only(right: 20)
+//                                       : null,
+//                               child: Column(
+//                                 crossAxisAlignment: CrossAxisAlignment.start,
+//                                 children: [
+//                                   CachedNetworkImage(
+//                                     imageUrl:
+//                                         "https://i.ytimg.com/vi/lg2cdA2BglE/mqdefault.jpg",
+//                                     height: 90,
+//                                     width: 160,
+//                                     fit: BoxFit.fill,
+//                                   ),
+//                                   const SizedBox(height: 10),
+//                                   const SizedBox(
+//                                     width: 160,
+//                                     child: Text(
+//                                       "1 hit = 5 Slandar bash charges [OMEGA BASH!]",
+//                                       maxLines: 2,
+//                                       overflow: TextOverflow.ellipsis,
+//                                       style: TextStyle(
+//                                         fontSize: 14.5,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                           );
+//                         },
+//                         separatorBuilder: (context, index) {
+//                           return const SizedBox(width: 15);
+//                         },
+//                         itemCount: 20,
+//                       ),
+//                     ),
+//                   ),
+                

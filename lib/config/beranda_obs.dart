@@ -21,7 +21,7 @@ class BerandaObs extends GetxController {
     BerandaService().getCategoryVideo().then((res) {
       var list = [
         {"one": "one"},
-        {"two": "two"}
+        {"two": "two"},
       ];
       if (res.items != null) {
         for (var i = 0; i < res.items!.length; i++) {

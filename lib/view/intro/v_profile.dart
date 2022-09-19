@@ -95,38 +95,59 @@ class _ProfileViewState extends State<ProfileView> {
                           Row(
                             children: [
                               Obx(
-                                () => ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: served.photoUrl.value == ''
-                                      ? Image.asset(
-                                          'assets/question.png',
-                                          width: 40,
-                                          height: 40,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : CachedNetworkImage(
-                                          imageUrl: served.photoUrl.value,
-                                          width: 40,
-                                          height: 40,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) {
-                                            return ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                              child: Container(
-                                                color: Colors.grey,
-                                              ),
-                                            );
-                                          },
-                                        ),
+                                () => CircleAvatar(
+                                  radius: 17.0,
+                                  backgroundColor: served.photoUrl.value != ''
+                                      ? kTransparent
+                                      : served.username.value != 'Pengguna'
+                                          ? Colors.red
+                                          : kTransparent,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: served.photoUrl.value == ''
+                                        ? served.username.value != 'Pengguna'
+                                            ? Text(
+                                                served.username.value
+                                                    .substring(0, 1)
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: kWhite,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )
+                                            : Image.asset(
+                                                'assets/question.png',
+                                                width: 40,
+                                                height: 40,
+                                                fit: BoxFit.cover,
+                                              )
+                                        : CachedNetworkImage(
+                                            imageUrl: served.photoUrl.value,
+                                            width: 40,
+                                            height: 40,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) {
+                                              return ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                child: Container(
+                                                  color: Colors.grey,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 15),
-                              Text(
-                                served.username.value,
-                                style: const TextStyle(
-                                  fontSize: 16.5,
-                                  color: kFontProfile,
+                              Obx(
+                                () => Text(
+                                  served.username.value,
+                                  style: const TextStyle(
+                                    fontSize: 16.5,
+                                    color: kFontProfile,
+                                  ),
                                 ),
                               ),
                             ],

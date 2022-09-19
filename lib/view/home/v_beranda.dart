@@ -7,6 +7,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:my_music/component/behavior.dart';
 import 'package:my_music/config/beranda_obs.dart';
 import 'package:my_music/config/colors.dart';
+import 'package:my_music/config/profile_obs.dart';
 import 'package:my_music/config/routes.gr.dart';
 import 'package:my_music/config/shared_preference.dart';
 import 'package:my_music/model/m_video_list.dart';
@@ -21,6 +22,7 @@ class BerandaView extends StatefulWidget {
 
 class _BerandaViewState extends State<BerandaView> {
   BerandaObs served = Get.put(BerandaObs());
+  ProfileObs servedProfile = Get.put(ProfileObs());
   SharedPreferenceConfig shared = SharedPreferenceConfig();
   final _googleSignIn = GoogleSignIn();
   final PagingController<int, Item> _pagingController =
@@ -203,23 +205,59 @@ class _BerandaViewState extends State<BerandaView> {
                   size: 28,
                 ),
                 const SizedBox(width: 20),
-                CircleAvatar(
-                  radius: 16.0,
-                  backgroundColor: kTransparent,
-                  child: InkWell(
-                    onTap: () {
-                      AutoRouter.of(context).push(const ProfileRoute());
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.asset(
-                        'assets/profile.jpg',
-                        width: 49,
-                        height: 32,
-                        fit: BoxFit.cover,
+                Obx(
+                  () {
+                    print("servedProfile.photoUrl.value");
+                    print(servedProfile.photoUrl.value);
+                    return CircleAvatar(
+                      radius: 17.0,
+                      backgroundColor: servedProfile.photoUrl.value != ''
+                          ? kTransparent
+                          : servedProfile.username.value != 'Pengguna'
+                              ? Colors.red
+                              : kTransparent,
+                      child: InkWell(
+                        onTap: () {
+                          AutoRouter.of(context).push(const ProfileRoute());
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: servedProfile.photoUrl.value != ''
+                              ? CachedNetworkImage(
+                                  imageUrl: servedProfile.photoUrl.value,
+                                  width: 49,
+                                  height: 32,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) {
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: Container(
+                                        color: Colors.grey,
+                                      ),
+                                    );
+                                  },
+                                )
+                              : servedProfile.username.value != 'Pengguna'
+                                  ? Text(
+                                      servedProfile.username.value
+                                          .substring(0, 1)
+                                          .toString(),
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        color: kWhite,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  : Image.asset(
+                                      'assets/question.png',
+                                      width: 40,
+                                      height: 40,
+                                      fit: BoxFit.cover,
+                                    ),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 const SizedBox(width: 20),
               ],
