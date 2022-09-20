@@ -42,47 +42,55 @@ class VideoListModel {
         "etag": etag,
         "items": List<dynamic>.from(items!.map((x) => x.toJson())),
         "nextPageToken": nextPageToken,
-        "pageInfo": pageInfo!.toJson(),
+        "pageInfo": pageInfo?.toJson(),
       };
 }
 
 class Item {
   Item({
-    required this.kind,
-    required this.etag,
-    required this.id,
-    required this.snippet,
-    required this.contentDetails,
-    required this.status,
-    required this.statistics,
+    this.kind,
+    this.etag,
+    this.id,
+    this.snippet,
+    this.contentDetails,
+    this.status,
+    this.statistics,
+    this.player,
   });
 
-  String kind;
-  String etag;
-  String id;
-  Snippet snippet;
-  ContentDetails contentDetails;
-  Status status;
-  Statistics statistics;
+  String? kind;
+  String? etag;
+  String? id;
+  Snippet? snippet;
+  ContentDetails? contentDetails;
+  Status? status;
+  Statistics? statistics;
+  Player? player;
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
         kind: json["kind"],
         etag: json["etag"],
         id: json["id"],
-        snippet: Snippet.fromJson(json["snippet"]),
-        contentDetails: ContentDetails.fromJson(json["contentDetails"]),
-        status: Status.fromJson(json["status"]),
-        statistics: Statistics.fromJson(json["statistics"]),
+        snippet:
+            json["snippet"] == null ? null : Snippet.fromJson(json["snippet"]),
+        contentDetails: json["contentDetails"] == null
+            ? null
+            : ContentDetails.fromJson(json["contentDetails"]),
+        status: json["status"] == null ? null : Status.fromJson(json["status"]),
+        statistics: json["statistics"] == null
+            ? null
+            : Statistics.fromJson(json["statistics"]),
+        player: json["player"] == null ? null : Player.fromJson(json["player"]),
       );
 
   Map<String, dynamic> toJson() => {
         "kind": kind,
         "etag": etag,
         "id": id,
-        "snippet": snippet.toJson(),
-        "contentDetails": contentDetails.toJson(),
-        "status": status.toJson(),
-        "statistics": statistics.toJson(),
+        "snippet": snippet?.toJson(),
+        "contentDetails": contentDetails?.toJson(),
+        "status": status?.toJson(),
+        "statistics": statistics?.toJson(),
       };
 }
 
@@ -215,6 +223,22 @@ class Snippet {
         "defaultLanguage": defaultLanguage,
         "localized": localized?.toJson(),
         "defaultAudioLanguage": defaultAudioLanguage,
+      };
+}
+
+class Player {
+  Player({
+    this.embedHtml,
+  });
+
+  String? embedHtml;
+
+  factory Player.fromJson(Map<String, dynamic> json) => Player(
+        embedHtml: json["embedHtml"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "embedHtml": embedHtml,
       };
 }
 

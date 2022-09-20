@@ -3,6 +3,7 @@ const partVideoListStatus = 'status';
 const partVideoListContentDetails = 'contentDetails';
 const partVideoListStatistics = 'statistics';
 const partVideoListSnippet = 'snippet';
+const partVideoListPlayer = 'player';
 const chartVideoList = 'mostPopular';
 const partCategoryVideoSnippet = 'snippet';
 const regionCodeCategoryVideo = 'ID';

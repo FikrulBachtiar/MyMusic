@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:my_music/model/m_video_list.dart';
 import 'package:my_music/service/s_beranda.dart';
 
 class BerandaObs extends GetxController {
@@ -15,6 +16,20 @@ class BerandaObs extends GetxController {
   var sizeList = 20.obs;
   var pageToken = ''.obs;
   var subNavItems = [].obs;
+  Rx<Item> playVideoItems = Item(
+    kind: null,
+    etag: null,
+    id: null,
+    snippet: null,
+    contentDetails: null,
+    status: null,
+    statistics: null,
+    player: null,
+  ).obs;
+
+  Future<void> addPlayVideoItems(Item item) async {
+    playVideoItems.value = item;
+  }
 
   categoryVideo() {
     BerandaService().getCategoryVideo().then((res) {

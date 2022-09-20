@@ -29,14 +29,14 @@ class _ProfileViewState extends State<ProfileView> {
       ],
     );
 
-    bool googleUsers = await signIn.isSignedIn();
-    if (!googleUsers) {
-      GoogleSignInAccount? googleUser = await signIn.signIn();
-      GoogleSignInAuthentication? auth = await googleUser!.authentication;
-      served.username.value = googleUser.displayName ?? "";
-      served.emails.value = googleUser.email;
-      served.photoUrl.value = googleUser.photoUrl ?? "";
-    }
+    // bool googleUsers = await signIn.isSignedIn();
+    // if (!googleUsers) {
+    //   GoogleSignInAccount? googleUser = await signIn.signIn();
+    //   GoogleSignInAuthentication? auth = await googleUser!.authentication;
+    //   served.username.value = googleUser.displayName ?? "";
+    //   served.emails.value = googleUser.email;
+    //   served.photoUrl.value = googleUser.photoUrl ?? "";
+    // }
     return;
   }
 

@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:html/parser.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:my_music/component/behavior.dart';
 import 'package:my_music/config/beranda_obs.dart';
@@ -54,6 +55,9 @@ class _BerandaViewState extends State<BerandaView> {
         .then(
       (res) {
         List<Item>? data = res.items ?? [];
+        var document = parse(data[0].player?.embedHtml);
+        var urlVideo = document.querySelectorAll('iframe')[0].attributes["src"];
+        print("https:$urlVideo");
         if (res.nextPageToken == null) {
           _pagingController.appendLastPage(data);
         } else {
@@ -250,9 +254,14 @@ class _BerandaViewState extends State<BerandaView> {
                 const SizedBox(width: 20),
                 Obx(
                   () {
+                    print("servedProfile.photoUrl.value");
+                    print(servedProfile.photoUrl.value);
+                    print(servedProfile.photoUrl.value == 'null'
+                        ? "HEHEHE"
+                        : "HUHUHUHU");
                     return CircleAvatar(
                       radius: 17.0,
-                      backgroundColor: servedProfile.photoUrl.value != ''
+                      backgroundColor: servedProfile.photoUrl.value != ""
                           ? kTransparent
                           : servedProfile.username.value != 'Pengguna'
                               ? Colors.red
@@ -263,7 +272,7 @@ class _BerandaViewState extends State<BerandaView> {
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50),
-                          child: servedProfile.photoUrl.value != ''
+                          child: servedProfile.photoUrl.value != ""
                               ? CachedNetworkImage(
                                   imageUrl: servedProfile.photoUrl.value,
                                   width: 49,
@@ -308,24 +317,32 @@ class _BerandaViewState extends State<BerandaView> {
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<Item>(
               itemBuilder: (context, item, index) {
-                var imageNetWork = item.snippet.thumbnails!.standard?.url ??
-                    item.snippet.thumbnails!.high!.url;
-                return Container(
+                var imageNetWork = item.snippet?.thumbnails?.standard?.url ??
+                    item.snippet?.thumbnails?.high!.url;
+                return InkWell(
+                  onTap: () {
+                    served.playVideoItems.value = item;
+                    context.router.push(const PlayVideoRoute());
+                  },
                   child: Column(
                     children: [
                       Stack(
                         children: [
-                          CachedNetworkImage(
-                            imageUrl: imageNetWork.toString(),
-                            placeholder: (context, url) {
-                              return SizedBox(
-                                width: double.parse(
-                                  item.snippet.thumbnails!.high!.width
-                                      .toString(),
-                                ),
-                                height: 280,
-                              );
-                            },
+                          Hero(
+                            tag: item.id.toString(),
+                            child: CachedNetworkImage(
+                              imageUrl: imageNetWork.toString(),
+                              placeholder: (context, url) {
+                                return SizedBox(
+                                  width: double.parse(
+                                    item.snippet?.thumbnails?.high?.width
+                                            .toString() ??
+                                        "",
+                                  ),
+                                  height: 280,
+                                );
+                              },
+                            ),
                           ),
                           Positioned(
                             bottom: 5,
@@ -340,7 +357,7 @@ class _BerandaViewState extends State<BerandaView> {
                                 borderRadius: BorderRadius.circular(2),
                               ),
                               child: Text(
-                                (item.contentDetails.duration)
+                                (item.contentDetails?.duration ?? "")
                                     .replaceAll('M', '.')
                                     .replaceAll('PT', '')
                                     .replaceAll('S', ''),
@@ -376,7 +393,7 @@ class _BerandaViewState extends State<BerandaView> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          item.snippet.title.toString(),
+                                          item.snippet?.title.toString() ?? "",
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -387,7 +404,7 @@ class _BerandaViewState extends State<BerandaView> {
                                         ),
                                         const SizedBox(height: 3),
                                         Text(
-                                          "${item.snippet.channelTitle} \u2022 117 rb x ditonton \u2022 1 bulan yang lalu",
+                                          "${item.snippet?.channelTitle} \u2022 117 rb x ditonton \u2022 1 bulan yang lalu",
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: kFontStatistics,

@@ -58,7 +58,7 @@ class Item {
         "kind": kind,
         "etag": etag,
         "id": id,
-        "snippet": snippet!.toJson(),
+        "snippet": snippet?.toJson(),
       };
 }
 

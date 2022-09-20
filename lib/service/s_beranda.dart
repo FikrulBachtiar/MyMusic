@@ -12,7 +12,7 @@ class BerandaService {
   }) async {
     try {
       Response response = await dioWithToken.get(
-        '/videos?part=$partVideoListStatus&part=$partVideoListContentDetails&part=$partVideoListStatistics&part=$partVideoListSnippet',
+        '/videos?part=$partVideoListStatus&part=$partVideoListContentDetails&part=$partVideoListStatistics&part=$partVideoListSnippet&part=$partVideoListPlayer',
         queryParameters: {
           "chart": chartVideoList,
           "maxResults": maxResults,

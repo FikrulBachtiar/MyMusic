@@ -25,10 +25,10 @@ void main() async {
   Future.wait([checkLogin()]).then((value) async {
     SharedPreferenceConfig shared = SharedPreferenceConfig();
     if (value[0]["status"] == "00") {
-      await shared.setAccessToken(value[0]["accessToken"].toString());
-      await shared.setName(value[0]["username"].toString());
+      await shared.setAccessToken(value[0]["accessToken"] ?? "");
+      await shared.setName(value[0]["username"] ?? "");
       await shared.setEmail(value[0]["email"] ?? "");
-      await shared.setPhotoUrl(value[0]["photoUrl"].toString());
+      await shared.setPhotoUrl(value[0]["photoUrl"] ?? "");
       runApp(MyApp());
     } else {
       runApp(MyApp());
@@ -65,7 +65,7 @@ Future<Map<String, String?>> checkLogin() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
-  final _appRouter = AppRouter();
+  final _appRouter = CustomAppRouter();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

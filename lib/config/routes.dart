@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/empty_router_widgets.dart';
+import 'package:my_music/config/transition.dart';
+import 'package:my_music/view/beranda/v_play_video.dart';
 import 'package:my_music/view/home/v_beranda.dart';
 import 'package:my_music/view/home/v_koleksi.dart';
 import 'package:my_music/view/home/v_shorts.dart';
@@ -13,50 +15,62 @@ import 'package:my_music/view/v_home.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: [
-    AutoRoute(
+    CustomRoute(
       path: '/profile',
       name: 'ProfileRoute',
       page: ProfileView,
     ),
-    AutoRoute(
+    CustomRoute(
       path: '/',
       page: MyHomePage,
       children: [
-        AutoRoute(
+        CustomRoute(
           path: 'beranda',
           name: 'BerandaRoute',
-          page: BerandaView,
+          page: EmptyRouterPage,
+          children: [
+            CustomRoute(
+              path: '',
+              page: BerandaView,
+            ),
+            CustomRoute(
+              path: 'play-video',
+              name: 'PlayVideoRoute',
+              page: PlayVideoView,
+              transitionsBuilder: zoomInTransition,
+            ),
+          ],
         ),
-        AutoRoute(
+        CustomRoute(
           path: 'shorts',
           name: 'ShortsRoute',
           page: ShortsView,
         ),
-        AutoRoute(
+        CustomRoute(
           path: 'subscription',
           name: 'SubscriptionRoute',
           page: SubscriptionView,
         ),
-        AutoRoute(
+        CustomRoute(
           path: 'koleksi',
           name: 'KoleksiRoute',
           page: EmptyRouterPage,
           children: [
-            AutoRoute(
+            CustomRoute(
               path: '',
               page: KoleksiView,
             ),
-            AutoRoute(
+            CustomRoute(
               path: 'history',
               name: 'HistoryRoute',
               page: HistoriView,
             ),
-            AutoRoute(
+            CustomRoute(
               path: 'tonton-nanti',
               name: 'TontonNantiRoute',
               page: TontonNantiView,
             ),
-            AutoRoute(
+            CustomRoute(
               path: 'film-anda',
               name: 'FilmAndaRoute',
               page: FilmAndaView,
@@ -67,4 +81,4 @@ import 'package:my_music/view/v_home.dart';
     ),
   ],
 )
-class $AppRouter {}
+class $CustomAppRouter {}

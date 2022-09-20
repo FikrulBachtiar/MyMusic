@@ -14,6 +14,7 @@ class TokenInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     String? accessToken = await shared.getAccessToken() ?? "";
     String? auth = accessToken != '' ? "Bearer $accessToken" : null;
+    print(auth);
 
     options.headers['Authorization'] = auth;
     options.queryParameters.addAll({"key": apiKey});
@@ -46,9 +47,13 @@ class TokenInterceptor extends Interceptor {
   // * Refresh Token
   Future<void> refreshAccessToken() async {
     GoogleSignIn signIn = GoogleSignIn(scopes: scopesGoogle);
+    bool isSign = await signIn.isSignedIn();
+    print("isSign $isSign");
     GoogleSignInAccount? signAgain = await signIn.signInSilently();
-    GoogleSignInAuthentication auth = await signAgain!.authentication;
-    String token = auth.accessToken ?? "";
+    print("signAgain $signAgain");
+    print("signAgain ${signAgain?.authentication}");
+    GoogleSignInAuthentication? auth = await signAgain?.authentication;
+    String token = auth?.accessToken ?? "";
     shared.setAccessToken(token);
   }
 
