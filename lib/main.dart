@@ -1,3 +1,4 @@
+import 'package:my_music/config/shared_preference.dart';
 import 'package:my_music/model/m_history_hive.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:flutter/material.dart';
@@ -21,12 +22,23 @@ void main() async {
   Hive
     ..init(appDocumentDirectory.path)
     ..registerAdapter(HistoryHiveAdapter());
-  Future.wait([checkLogin()]).then((value) => runApp(MyApp()));
+  Future.wait([checkLogin()]).then((value) async {
+    SharedPreferenceConfig shared = SharedPreferenceConfig();
+    if (value[0]["status"] == "00") {
+      await shared.setAccessToken(value[0]["accessToken"].toString());
+      await shared.setName(value[0]["username"].toString());
+      await shared.setEmail(value[0]["email"] ?? "");
+      await shared.setPhotoUrl(value[0]["photoUrl"].toString());
+      runApp(MyApp());
+    } else {
+      runApp(MyApp());
+    }
+  });
 }
 
 ProfileObs served = Get.put(ProfileObs());
 
-Future<void> checkLogin() async {
+Future<Map<String, String?>> checkLogin() async {
   GoogleSignIn signIn = GoogleSignIn(
     scopes: [
       'https://www.googleapis.com/auth/youtube.readonly',
@@ -38,13 +50,17 @@ Future<void> checkLogin() async {
   bool googleUsers = await signIn.isSignedIn();
   if (!googleUsers) {
     GoogleSignInAccount? googleUser = await signIn.signIn();
-    GoogleSignInAuthentication? auth = await googleUser!.authentication;
-    served.username.value = googleUser.displayName ?? "";
-    served.emails.value = googleUser.email;
-    served.photoUrl.value = googleUser.photoUrl ?? "";
-    return;
+    GoogleSignInAuthentication auth = await googleUser!.authentication;
+    return {
+      "status": "00",
+      "username": googleUser.displayName,
+      "photoUrl": googleUser.photoUrl,
+      "email": googleUser.email,
+      "accessToken": auth.accessToken,
+    };
+  } else {
+    return {"status": "01"};
   }
-  return;
 }
 
 class MyApp extends StatelessWidget {

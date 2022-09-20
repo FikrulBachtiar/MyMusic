@@ -10,7 +10,6 @@ class BerandaObs extends GetxController {
     super.onInit();
   }
 
-  var navTabItems = [0, 1, "Semua", "Game", "Video Mix", "Musik", "Live"].obs;
   var currentIndexSubNav = 2.obs;
   var videoCategoryId = 0.obs;
   var sizeList = 20.obs;
@@ -22,6 +21,7 @@ class BerandaObs extends GetxController {
       var list = [
         {"one": "one"},
         {"two": "two"},
+        {"three": "three"},
       ];
       if (res.items != null) {
         for (var i = 0; i < res.items!.length; i++) {

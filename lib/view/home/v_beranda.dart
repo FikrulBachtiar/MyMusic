@@ -33,6 +33,7 @@ class _BerandaViewState extends State<BerandaView> {
     _pagingController.addPageRequestListener((page) {
       fetchPage(page);
     });
+    servedProfile.init();
     super.initState();
   }
 
@@ -44,13 +45,11 @@ class _BerandaViewState extends State<BerandaView> {
   }
 
   fetchPage(int page) async {
-    String accessToken = await shared.getAccessToken();
     BerandaService()
         .getVideoList(
       maxResults: served.sizeList.value,
       pageToken: served.pageToken.value,
       videoCategoryId: served.videoCategoryId.value.toString(),
-      accessToken: accessToken,
     )
         .then(
       (res) {
@@ -122,11 +121,55 @@ class _BerandaViewState extends State<BerandaView> {
                                   indent: 2,
                                   endIndent: 2,
                                 );
+                              } else if (x == 2) {
+                                return Obx(
+                                  () => InkWell(
+                                    onTap: () => served.changeIndexSubNav(
+                                        x, '0', _pagingController),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      margin:
+                                          x == (served.subNavItems.length - 1)
+                                              ? const EdgeInsets.only(right: 10)
+                                              : null,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: kBorderItemSubNavbar,
+                                        ),
+                                        color:
+                                            x == served.currentIndexSubNav.value
+                                                ? kItemSubNavbarActive
+                                                : kItemSubNavbar,
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(20)),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Semua",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: x ==
+                                                      served.currentIndexSubNav
+                                                          .value
+                                                  ? kFontSubNavbarActive
+                                                  : kFontSubNavbar,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
                               } else {
                                 return Obx(
                                   () => InkWell(
-                                    splashColor: kTransparent,
-                                    highlightColor: kTransparent,
                                     onTap: () => served.changeIndexSubNav(
                                       x,
                                       served.subNavItems[x]["id"],
@@ -207,8 +250,6 @@ class _BerandaViewState extends State<BerandaView> {
                 const SizedBox(width: 20),
                 Obx(
                   () {
-                    print("servedProfile.photoUrl.value");
-                    print(servedProfile.photoUrl.value);
                     return CircleAvatar(
                       radius: 17.0,
                       backgroundColor: servedProfile.photoUrl.value != ''
@@ -250,8 +291,8 @@ class _BerandaViewState extends State<BerandaView> {
                                     )
                                   : Image.asset(
                                       'assets/question.png',
-                                      width: 40,
-                                      height: 40,
+                                      width: 49,
+                                      height: 34,
                                       fit: BoxFit.cover,
                                     ),
                         ),
