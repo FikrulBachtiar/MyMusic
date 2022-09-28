@@ -24,3 +24,5 @@ const kTextTontonNanti = Color.fromRGBO(165, 165, 165, 1);
 
 const kBlack = Colors.black;
 const kWhite = Colors.white;
+const kGrey = Color.fromRGBO(119, 119, 119, 1);
+const kGreyTwo = Color.fromARGB(255, 181, 179, 179);

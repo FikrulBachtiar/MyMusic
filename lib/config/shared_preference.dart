@@ -11,7 +11,6 @@ class SharedPreferenceConfig {
 
   Future<void> setAccessToken(String value) async {
     SharedPreferences shared = await SharedPreferences.getInstance();
-    print("iki wes lilo $value");
     await shared.setString('accessToken', value);
     return;
   }
@@ -19,6 +18,17 @@ class SharedPreferenceConfig {
   Future<String?> getAccessToken() async {
     SharedPreferences shared = await SharedPreferences.getInstance();
     return shared.getString('accessToken');
+  }
+
+  Future<void> setIDToken(String value) async {
+    SharedPreferences shared = await SharedPreferences.getInstance();
+    await shared.setString('idToken', value);
+    return;
+  }
+
+  Future<String?> getIDToken() async {
+    SharedPreferences shared = await SharedPreferences.getInstance();
+    return shared.getString('idToken');
   }
 
   Future<void> setName(String value) async {

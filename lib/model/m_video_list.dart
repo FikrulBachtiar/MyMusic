@@ -17,7 +17,7 @@ class VideoListModel {
 
   String? kind;
   String? etag;
-  List<Item>? items;
+  List<ItemVideoList>? items;
   String? nextPageToken;
   PageInfo? pageInfo;
   VideoListModelError? error;
@@ -27,7 +27,8 @@ class VideoListModel {
         etag: json["etag"],
         items: json["items"] == null
             ? null
-            : List<Item>.from(json["items"].map((x) => Item.fromJson(x))),
+            : List<ItemVideoList>.from(
+                json["items"].map((x) => ItemVideoList.fromJson(x))),
         nextPageToken: json["nextPageToken"],
         pageInfo: json["pageInfo"] == null
             ? null
@@ -46,8 +47,8 @@ class VideoListModel {
       };
 }
 
-class Item {
-  Item({
+class ItemVideoList {
+  ItemVideoList({
     this.kind,
     this.etag,
     this.id,
@@ -67,7 +68,7 @@ class Item {
   Statistics? statistics;
   Player? player;
 
-  factory Item.fromJson(Map<String, dynamic> json) => Item(
+  factory ItemVideoList.fromJson(Map<String, dynamic> json) => ItemVideoList(
         kind: json["kind"],
         etag: json["etag"],
         id: json["id"],

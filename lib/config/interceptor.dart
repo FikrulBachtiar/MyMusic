@@ -46,15 +46,18 @@ class TokenInterceptor extends Interceptor {
 
   // * Refresh Token
   Future<void> refreshAccessToken() async {
-    GoogleSignIn signIn = GoogleSignIn(scopes: scopesGoogle);
+    GoogleSignIn signIn = GoogleSignIn(
+      scopes: scopesGoogle,
+      clientId: clientIDgoogle,
+    );
     bool isSign = await signIn.isSignedIn();
-    print("isSign $isSign");
     GoogleSignInAccount? signAgain = await signIn.signInSilently();
-    print("signAgain $signAgain");
-    print("signAgain ${signAgain?.authentication}");
     GoogleSignInAuthentication? auth = await signAgain?.authentication;
+    var tokenRefresh = auth?.idToken ?? "";
     String token = auth?.accessToken ?? "";
+    print(tokenRefresh);
     shared.setAccessToken(token);
+    shared.setIDToken(tokenRefresh);
   }
 
   // * Retry

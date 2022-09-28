@@ -55,6 +55,13 @@ dependencies:
   hive_generator: ^1.1.3
   path_provider: ^2.0.11
   html: ^0.15.0
+  page_transition: ^2.0.9
+  modal_bottom_sheet: ^2.1.2
+  sliding_up_panel: ^2.0.0+1
+  youtube_player_flutter: ^8.1.0
+  sliding_sheet: ^0.5.2
+  miniplayer: ^1.0.1
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
@@ -81,8 +88,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/png/ytb.png
+    - assets/png/question.png
     - assets/profile.jpg
-    - assets/question.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

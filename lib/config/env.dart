@@ -13,3 +13,5 @@ const scopesGoogle = [
   'https://www.googleapis.com/auth/youtube.force-ssl',
   'https://www.googleapis.com/auth/youtubepartner',
 ];
+const clientIDgoogle =
+    "1081011212757-qflbac698qmna97blckc8gi8qact1kgd.apps.googleusercontent.com";

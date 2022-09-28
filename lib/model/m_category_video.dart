@@ -15,7 +15,7 @@ class CategoryVideoModel {
 
   String? kind;
   String? etag;
-  List<Item>? items;
+  List<ItemCategoryVideo>? items;
 
   factory CategoryVideoModel.fromJson(Map<String, dynamic> json) =>
       CategoryVideoModel(
@@ -23,7 +23,8 @@ class CategoryVideoModel {
         etag: json["etag"],
         items: json["items"] == null
             ? null
-            : List<Item>.from(json["items"].map((x) => Item.fromJson(x))),
+            : List<ItemCategoryVideo>.from(
+                json["items"].map((x) => ItemCategoryVideo.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,8 +34,8 @@ class CategoryVideoModel {
       };
 }
 
-class Item {
-  Item({
+class ItemCategoryVideo {
+  ItemCategoryVideo({
     this.kind,
     this.etag,
     this.id,
@@ -46,7 +47,8 @@ class Item {
   String? id;
   Snippet? snippet;
 
-  factory Item.fromJson(Map<String, dynamic> json) => Item(
+  factory ItemCategoryVideo.fromJson(Map<String, dynamic> json) =>
+      ItemCategoryVideo(
         kind: json["kind"],
         etag: json["etag"],
         id: json["id"],

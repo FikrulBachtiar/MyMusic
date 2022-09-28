@@ -95,7 +95,7 @@ class _KoleksiViewState extends State<KoleksiView> {
                                   ),
                                 )
                               : Image.asset(
-                                  'assets/question.png',
+                                  'assets/png/question.png',
                                   width: 49,
                                   height: 34,
                                   fit: BoxFit.cover,

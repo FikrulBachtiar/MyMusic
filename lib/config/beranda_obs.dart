@@ -16,20 +16,10 @@ class BerandaObs extends GetxController {
   var sizeList = 20.obs;
   var pageToken = ''.obs;
   var subNavItems = [].obs;
-  Rx<Item> playVideoItems = Item(
-    kind: null,
-    etag: null,
-    id: null,
-    snippet: null,
-    contentDetails: null,
-    status: null,
-    statistics: null,
-    player: null,
-  ).obs;
-
-  Future<void> addPlayVideoItems(Item item) async {
-    playVideoItems.value = item;
-  }
+  var fullSizeMaxHeightPanel = true.obs;
+  var isOpen = false.obs;
+  var minHeightPanel = 70.0.obs;
+  var dataItems = ItemVideoList().obs;
 
   categoryVideo() {
     BerandaService().getCategoryVideo().then((res) {

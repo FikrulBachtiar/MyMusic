@@ -117,7 +117,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                 ),
                                               )
                                             : Image.asset(
-                                                'assets/question.png',
+                                                'assets/png/question.png',
                                                 width: 40,
                                                 height: 40,
                                                 fit: BoxFit.cover,

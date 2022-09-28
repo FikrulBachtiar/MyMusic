@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:html/parser.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:miniplayer/miniplayer.dart';
 import 'package:my_music/component/behavior.dart';
 import 'package:my_music/config/beranda_obs.dart';
 import 'package:my_music/config/colors.dart';
@@ -13,8 +13,8 @@ import 'package:my_music/config/routes.gr.dart';
 import 'package:my_music/config/shared_preference.dart';
 import 'package:my_music/model/m_video_list.dart';
 import 'package:my_music/service/s_beranda.dart';
-import 'package:my_music/view/beranda/v_play_video_max.dart';
-import 'package:my_music/view/beranda/v_play_video_min.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class BerandaView extends StatefulWidget {
   const BerandaView({super.key});
@@ -29,10 +29,11 @@ class _BerandaViewState extends State<BerandaView>
   ProfileObs servedProfile = Get.put(ProfileObs());
   final scaffoldKey = GlobalKey<ScaffoldState>();
   SharedPreferenceConfig shared = SharedPreferenceConfig();
-  late AnimationController _animationController;
-  final MiniplayerController _miniplayerController = MiniplayerController();
-  final PagingController<int, ItemVideoList> _pagingController =
+  final PagingController<int, Item> _pagingController =
       PagingController(firstPageKey: 0);
+
+  late YoutubePlayerController _playerController;
+  final PanelController _panelController = PanelController();
 
   @override
   void initState() {
@@ -40,20 +41,13 @@ class _BerandaViewState extends State<BerandaView>
       fetchPage(page);
     });
     servedProfile.init();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    )..addListener(() {
-        print(_animationController.value);
-        _animationController.animateTo(0.03);
-      });
     super.initState();
   }
 
   @override
   void dispose() {
     _pagingController.dispose();
-    _animationController.dispose();
+    _playerController.dispose();
     Get.delete<BerandaObs>();
     super.dispose();
   }
@@ -67,7 +61,7 @@ class _BerandaViewState extends State<BerandaView>
     )
         .then(
       (res) {
-        List<ItemVideoList>? data = res.items ?? [];
+        List<Item>? data = res.items ?? [];
         var document = parse(data[0].player?.embedHtml);
         var urlVideo = document.querySelectorAll('iframe')[0].attributes["src"];
         if (res.nextPageToken == null) {
@@ -76,76 +70,67 @@ class _BerandaViewState extends State<BerandaView>
           served.pageToken.value = res.nextPageToken.toString();
           _pagingController.appendPage(data, page);
         }
+        if (data.length >= 0) {
+          _playerController = YoutubePlayerController(
+            initialVideoId: data[0].id.toString(),
+            flags: const YoutubePlayerFlags(),
+          );
+        }
       },
     );
   }
 
-  // playVideos(Item items) {
-  //   showSlidingBottomSheet(
-  //     context,
-  //     builder: (_) {
-  //       return SlidingSheetDialog(
-  //         controller: _sheetController,
-  //         extendBody: true,
-  //         dismissOnBackdropTap: false,
-  //         isDismissable: dismiss,
-  //         backdropColor: kTransparent,
-  //         duration: const Duration(milliseconds: 500),
-  //         maxWidth: double.infinity,
-  //         snapSpec: SnapSpec(
-  //           snap: true,
-  //           initialSnap: double.infinity,
-  //           snappings: [112, double.infinity],
-  //           positioning: SnapPositioning.pixelOffset,
-  //           onSnap: (p0, snap) {
-  //             if (snap == 112.0) {
-  //               setState(() => dismiss = true);
-  //             } else {
-  //               setState(() => dismiss = false);
-  //             }
-  //             _sheetController.rebuild();
-  //           },
-  //         ),
-  //         builder: (context, state) {
-  //           return Container(
-  //             color: Colors.red,
-  //             height: MediaQuery.of(context).size.height,
-  //             width: MediaQuery.of(context).size.width,
-  //             child: const Text("Hello World"),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
+  // youtubeListener() {
+  //   print("INI PLAYER ${_playerController.value.isReady}");
   // }
 
-  playVideos(ItemVideoList items) {
-    served.dataItems.value = items;
-    _miniplayerController.animateToHeight(state: PanelState.MAX);
+  @override
+  void deactivate() {
+    _playerController.pause();
+    super.deactivate();
   }
 
-  Widget miniPlayer(Size size) {
+  playVideos(Item items) {
+    _playerController.load(items.id.toString());
+    served.isOpen.value = true;
+    served.minHeightPanel.value = 70;
+    _panelController.show();
+    _panelController.open();
+  }
+
+  Widget playVideoViews(ScrollController scrollController) {
     return Obx(
-      () => Offstage(
-        offstage: served.dataItems.value.id == null,
-        child: Miniplayer(
-          minHeight: served.minHeightPanel.value,
-          maxHeight: size.height,
-          backgroundColor: const Color.fromRGBO(33, 33, 33, 1),
-          controller: _miniplayerController,
-          builder: (height, percent) {
-            if (served.dataItems.value.id == null) {
-              return const SizedBox.shrink();
-            } else {
-              if (height <= served.minHeightPanel.value + 5) {
-                return const PlayVideoViewMin();
-              } else {
-                return PlayVideoViewMax(pagingController: _pagingController);
-              }
-            }
-          },
-        ),
-      ),
+      () {
+        return served.isOpen.isFalse
+            ? Container()
+            : Container(
+                color: const Color.fromRGBO(33, 33, 33, 1),
+                child: Column(
+                  children: [
+                    YoutubePlayerBuilder(
+                      onExitFullScreen: () {
+                        SystemChrome.setPreferredOrientations(
+                            DeviceOrientation.values);
+                      },
+                      player: YoutubePlayer(
+                        controller: _playerController,
+                        onReady: () {
+                          print("HELLE");
+                        },
+                        showVideoProgressIndicator: true,
+                        progressColors: const ProgressBarColors(
+                          playedColor: Colors.red,
+                          handleColor: Colors.red,
+                        ),
+                      ),
+                      builder: (_, widgets) {
+                        return widgets;
+                      },
+                    ),
+                  ],
+                ),
+              );
+      },
     );
   }
 
@@ -399,9 +384,9 @@ class _BerandaViewState extends State<BerandaView>
                     const SizedBox(width: 20),
                   ],
                 ),
-                PagedSliverList<int, ItemVideoList>(
+                PagedSliverList<int, Item>(
                   pagingController: _pagingController,
-                  builderDelegate: PagedChildBuilderDelegate<ItemVideoList>(
+                  builderDelegate: PagedChildBuilderDelegate<Item>(
                     itemBuilder: (context, item, index) {
                       var imageNetWork =
                           item.snippet?.thumbnails?.standard?.url ??
@@ -522,7 +507,28 @@ class _BerandaViewState extends State<BerandaView>
                 ),
               ],
             ),
-            miniPlayer(size),
+            SafeArea(
+              child: SlidingUpPanel(
+                controller: _panelController,
+                minHeight: served.minHeightPanel.value,
+                maxHeight: size.height,
+                onPanelOpened: () {
+                  served.isOpen.value = true;
+                  served.minHeightPanel.value = 70.0;
+                },
+                onPanelClosed: () {
+                  if (served.isOpen.isTrue) {
+                    served.isOpen.value = false;
+                  } else {
+                    served.minHeightPanel.value = 0.0;
+                    _panelController.hide();
+                    _panelController.close();
+                  }
+                },
+                panelBuilder: (scrollController) =>
+                    playVideoViews(scrollController),
+              ),
+            ),
           ],
         ),
       ),
