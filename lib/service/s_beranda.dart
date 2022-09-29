@@ -27,9 +27,6 @@ class BerandaService {
         VideoListModel message = VideoListModel.fromJson(e.response?.data);
         return message;
       } else {
-        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        print(e);
-        print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         rethrow;
       }
     }

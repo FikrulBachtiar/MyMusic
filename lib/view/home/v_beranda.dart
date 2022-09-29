@@ -6,6 +6,7 @@ import 'package:html/parser.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:miniplayer/miniplayer.dart';
 import 'package:my_music/component/behavior.dart';
+import 'package:my_music/component/circle_avatar.dart';
 import 'package:my_music/config/beranda_obs.dart';
 import 'package:my_music/config/colors.dart';
 import 'package:my_music/config/profile_obs.dart';
@@ -15,6 +16,7 @@ import 'package:my_music/model/m_video_list.dart';
 import 'package:my_music/service/s_beranda.dart';
 import 'package:my_music/view/beranda/v_play_video_max.dart';
 import 'package:my_music/view/beranda/v_play_video_min.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class BerandaView extends StatefulWidget {
   const BerandaView({super.key});
@@ -33,6 +35,7 @@ class _BerandaViewState extends State<BerandaView>
   final MiniplayerController _miniplayerController = MiniplayerController();
   final PagingController<int, ItemVideoList> _pagingController =
       PagingController(firstPageKey: 0);
+  late YoutubePlayerController _youtubePlayerController;
 
   @override
   void initState() {
@@ -40,13 +43,8 @@ class _BerandaViewState extends State<BerandaView>
       fetchPage(page);
     });
     servedProfile.init();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    )..addListener(() {
-        print(_animationController.value);
-        _animationController.animateTo(0.03);
-      });
+    served.categoryVideo();
+    _animationController = AnimationController(vsync: this);
     super.initState();
   }
 
@@ -121,6 +119,12 @@ class _BerandaViewState extends State<BerandaView>
 
   playVideos(ItemVideoList items) {
     served.dataItems.value = items;
+    _youtubePlayerController = YoutubePlayerController(
+      initialVideoId: items.id.toString(),
+      flags: const YoutubePlayerFlags(
+        disableDragSeek: true,
+      ),
+    );
     _miniplayerController.animateToHeight(state: PanelState.MAX);
   }
 
@@ -130,7 +134,7 @@ class _BerandaViewState extends State<BerandaView>
         offstage: served.dataItems.value.id == null,
         child: Miniplayer(
           minHeight: served.minHeightPanel.value,
-          maxHeight: size.height,
+          maxHeight: size.height - context.mediaQueryPadding.top,
           backgroundColor: const Color.fromRGBO(33, 33, 33, 1),
           controller: _miniplayerController,
           builder: (height, percent) {
@@ -138,9 +142,13 @@ class _BerandaViewState extends State<BerandaView>
               return const SizedBox.shrink();
             } else {
               if (height <= served.minHeightPanel.value + 5) {
-                return const PlayVideoViewMin();
+                return PlayVideoViewMin(
+                  youtubePlayerController: _youtubePlayerController,
+                );
               } else {
-                return PlayVideoViewMax(pagingController: _pagingController);
+                return PlayVideoViewMax(
+                  youtubePlayerController: _youtubePlayerController,
+                );
               }
             }
           },
@@ -343,58 +351,9 @@ class _BerandaViewState extends State<BerandaView>
                       size: 28,
                     ),
                     const SizedBox(width: 20),
-                    Obx(
-                      () {
-                        return CircleAvatar(
-                          radius: 17.0,
-                          backgroundColor: servedProfile.photoUrl.value != ""
-                              ? kTransparent
-                              : servedProfile.username.value != 'Pengguna'
-                                  ? Colors.red
-                                  : kTransparent,
-                          child: InkWell(
-                            onTap: () {
-                              AutoRouter.of(context).push(const ProfileRoute());
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: servedProfile.photoUrl.value != ""
-                                  ? CachedNetworkImage(
-                                      imageUrl: servedProfile.photoUrl.value,
-                                      width: 49,
-                                      height: 32,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) {
-                                        return ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          child: Container(
-                                            color: Colors.grey,
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : servedProfile.username.value != 'Pengguna'
-                                      ? Text(
-                                          servedProfile.username.value
-                                              .substring(0, 1)
-                                              .toString(),
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            color: kWhite,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )
-                                      : Image.asset(
-                                          'assets/png/question.png',
-                                          width: 49,
-                                          height: 34,
-                                          fit: BoxFit.cover,
-                                        ),
-                            ),
-                          ),
-                        );
-                      },
+                    CircleAvatarComponent(
+                      onTap: () =>
+                          AutoRouter.of(context).push(const ProfileRoute()),
                     ),
                     const SizedBox(width: 20),
                   ],

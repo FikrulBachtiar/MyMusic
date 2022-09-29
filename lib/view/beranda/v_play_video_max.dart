@@ -2,17 +2,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:html/parser.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:my_music/component/behavior.dart';
+import 'package:my_music/component/circle_avatar.dart';
 import 'package:my_music/config/beranda_obs.dart';
 import 'package:my_music/config/colors.dart';
 import 'package:my_music/config/currency_format.dart';
 import 'package:my_music/config/profile_obs.dart';
 import 'package:my_music/model/m_video_list.dart';
+import 'package:my_music/service/s_beranda.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class PlayVideoViewMax extends StatefulWidget {
-  const PlayVideoViewMax({super.key, required this.pagingController});
-  final PagingController<int, ItemVideoList> pagingController;
+  PlayVideoViewMax({super.key, required this.youtubePlayerController});
+  YoutubePlayerController youtubePlayerController;
 
   @override
   State<PlayVideoViewMax> createState() => _PlayVideoViewMaxState();
@@ -25,12 +29,41 @@ class _PlayVideoViewMaxState extends State<PlayVideoViewMax>
   final DraggableScrollableController _scrollableController =
       DraggableScrollableController();
   late AnimationController _animationController;
+  final PagingController<int, ItemVideoList> _pagingController =
+      PagingController(firstPageKey: 0);
 
   @override
   void initState() {
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1000));
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _pagingController.addPageRequestListener((page) {
+      fetchPage(page);
+    });
     super.initState();
+  }
+
+  fetchPage(int page) async {
+    BerandaService()
+        .getVideoList(
+      maxResults: served.sizeList.value,
+      pageToken: served.pageTokenPlay.value,
+      videoCategoryId: served.videoCategoryId.value.toString(),
+    )
+        .then(
+      (res) {
+        List<ItemVideoList>? data = res.items ?? [];
+        var document = parse(data[0].player?.embedHtml);
+        var urlVideo = document.querySelectorAll('iframe')[0].attributes["src"];
+        if (res.nextPageToken == null) {
+          _pagingController.appendLastPage(data);
+        } else {
+          served.pageTokenPlay.value = res.nextPageToken.toString();
+          _pagingController.appendPage(data, page);
+        }
+      },
+    );
   }
 
   @override
@@ -43,50 +76,60 @@ class _PlayVideoViewMaxState extends State<PlayVideoViewMax>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(body: bodys(size));
+    return Scaffold(
+      body: bodys(size),
+    );
   }
 
   Widget bodys(Size size) {
-    return Column(
-      children: [
-        CachedNetworkImage(
-          imageUrl: served.dataItems.value.snippet?.thumbnails?.standard?.url ??
-              served.dataItems.value.snippet?.thumbnails?.high!.url ??
-              "",
-          fit: BoxFit.cover,
-          placeholder: (context, url) {
-            return SizedBox(
-              width: double.parse(
-                served.dataItems.value.snippet?.thumbnails?.high?.width
-                        .toString() ??
-                    "",
-              ),
-              height: 280,
-            );
-          },
-        ),
-        Expanded(
-          child: ScrollConfiguration(
-            behavior: BehaviorComponent(),
-            child: SingleChildScrollView(
-              // primary: true,
-              child: Column(
-                children: [
-                  infoVideo(size),
-                  const SizedBox(height: 20),
-                  pagingContent()
-                ],
+    return SafeArea(
+      child: Column(
+        children: [
+          YoutubePlayer(
+            controller: widget.youtubePlayerController,
+            showVideoProgressIndicator: true,
+            progressIndicatorColor: Colors.red,
+            onReady: () {},
+            thumbnail: CachedNetworkImage(
+              imageUrl:
+                  served.dataItems.value.snippet?.thumbnails?.standard?.url ??
+                      served.dataItems.value.snippet?.thumbnails?.high!.url ??
+                      "",
+              fit: BoxFit.cover,
+              placeholder: (context, url) {
+                return SizedBox(
+                  width: double.parse(
+                    served.dataItems.value.snippet?.thumbnails?.high?.width
+                            .toString() ??
+                        "",
+                  ),
+                  height: 280,
+                );
+              },
+            ),
+          ),
+          Expanded(
+            child: ScrollConfiguration(
+              behavior: BehaviorComponent(),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    infoVideo(size),
+                    const SizedBox(height: 20),
+                    pagingContent()
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget pagingContent() {
     return PagedListView<int, ItemVideoList>(
-      pagingController: widget.pagingController,
+      pagingController: _pagingController,
       shrinkWrap: true,
       primary: false,
       physics: const NeverScrollableScrollPhysics(),
@@ -329,26 +372,7 @@ class _PlayVideoViewMaxState extends State<PlayVideoViewMax>
           const SizedBox(height: 10),
           Row(
             children: [
-              CircleAvatar(
-                radius: 16,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: CachedNetworkImage(
-                    imageUrl: servedProfile.photoUrl.value,
-                    width: 49,
-                    height: 32,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Container(
-                          color: Colors.grey,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+              CircleAvatarComponent(radius: 14),
               const SizedBox(width: 10),
               Expanded(
                 child: Container(
@@ -360,21 +384,6 @@ class _PlayVideoViewMaxState extends State<PlayVideoViewMax>
                   ),
                 ),
               ),
-              // Expanded(
-              //   child: Container(
-              //     color: Colors.black,
-              //     padding: const EdgeInsets.symmetric(vertical: 10),
-              //     child: const TextField(
-              //       style: TextStyle(
-              //         fontSize: 12,
-              //       ),
-              //       decoration: InputDecoration.collapsed(
-              //         hintText: "Tambahkan komentar...",
-              //         hintStyle: TextStyle(fontSize: 12),
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ],

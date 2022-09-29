@@ -5,16 +5,11 @@ import 'package:my_music/model/m_video_list.dart';
 import 'package:my_music/service/s_beranda.dart';
 
 class BerandaObs extends GetxController {
-  @override
-  void onInit() {
-    categoryVideo();
-    super.onInit();
-  }
-
   var currentIndexSubNav = 2.obs;
   var videoCategoryId = 0.obs;
   var sizeList = 20.obs;
   var pageToken = ''.obs;
+  var pageTokenPlay = ''.obs;
   var subNavItems = [].obs;
   var fullSizeMaxHeightPanel = true.obs;
   var isOpen = false.obs;
