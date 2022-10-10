@@ -1,3 +1,4 @@
+import 'package:my_music/config/env.dart';
 import 'package:my_music/config/shared_preference.dart';
 import 'package:my_music/model/m_history_hive.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
@@ -10,6 +11,7 @@ import 'package:my_music/config/colors.dart';
 import 'package:my_music/config/profile_obs.dart';
 import 'package:my_music/config/routes.gr.dart';
 import 'package:my_music/config/themes.dart';
+import 'package:time_machine/time_machine.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +19,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: kBlack),
   );
+  await TimeMachine.initialize({'rootBundle': rootBundle});
   var appDocumentDirectory =
       await pathProvider.getApplicationDocumentsDirectory();
   Hive
@@ -26,6 +29,7 @@ void main() async {
     SharedPreferenceConfig shared = SharedPreferenceConfig();
     if (value[0]["status"] == "00") {
       await shared.setAccessToken(value[0]["accessToken"] ?? "");
+      await shared.setIDToken(value[0]["idToken"] ?? "");
       await shared.setName(value[0]["username"] ?? "");
       await shared.setEmail(value[0]["email"] ?? "");
       await shared.setPhotoUrl(value[0]["photoUrl"] ?? "");
@@ -39,24 +43,20 @@ void main() async {
 ProfileObs served = Get.put(ProfileObs());
 
 Future<Map<String, String?>> checkLogin() async {
-  GoogleSignIn signIn = GoogleSignIn(
-    scopes: [
-      'https://www.googleapis.com/auth/youtube.readonly',
-      'https://www.googleapis.com/auth/youtube',
-      'https://www.googleapis.com/auth/youtube.force-ssl',
-      'https://www.googleapis.com/auth/youtubepartner',
-    ],
-  );
-  bool googleUsers = await signIn.isSignedIn();
-  if (!googleUsers) {
+  SharedPreferenceConfig shared = SharedPreferenceConfig();
+  GoogleSignIn signIn = GoogleSignIn(scopes: scopesGoogle);
+
+  String? accessToken = await shared.getAccessToken();
+  if (accessToken == null || accessToken == "") {
     GoogleSignInAccount? googleUser = await signIn.signIn();
-    GoogleSignInAuthentication auth = await googleUser!.authentication;
+    GoogleSignInAuthentication? auth = await googleUser?.authentication;
     return {
       "status": "00",
-      "username": googleUser.displayName,
-      "photoUrl": googleUser.photoUrl,
-      "email": googleUser.email,
-      "accessToken": auth.accessToken,
+      "username": googleUser?.displayName,
+      "photoUrl": googleUser?.photoUrl,
+      "email": googleUser?.email,
+      "accessToken": auth?.accessToken,
+      "idToken": auth?.idToken,
     };
   } else {
     return {"status": "01"};

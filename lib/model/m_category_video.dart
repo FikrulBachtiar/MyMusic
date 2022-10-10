@@ -11,16 +11,21 @@ class CategoryVideoModel {
     this.kind,
     this.etag,
     this.items,
+    this.error,
   });
 
   String? kind;
   String? etag;
   List<ItemCategoryVideo>? items;
+  CategoryVideoError? error;
 
   factory CategoryVideoModel.fromJson(Map<String, dynamic> json) =>
       CategoryVideoModel(
         kind: json["kind"],
         etag: json["etag"],
+        error: json["error"] == null
+            ? null
+            : CategoryVideoError.fromJson(json["error"]),
         items: json["items"] == null
             ? null
             : List<ItemCategoryVideo>.from(
@@ -31,6 +36,36 @@ class CategoryVideoModel {
         "kind": kind,
         "etag": etag,
         "items": List<dynamic>.from(items!.map((x) => x.toJson())),
+        "error": error,
+      };
+}
+
+class CategoryVideoError {
+  CategoryVideoError({
+    this.code,
+    this.message,
+    this.errors,
+    this.status,
+  });
+
+  int? code;
+  String? message;
+  dynamic errors;
+  String? status;
+
+  factory CategoryVideoError.fromJson(Map<String, dynamic> json) =>
+      CategoryVideoError(
+        code: json["code"],
+        message: json["message"],
+        errors: json["errors"],
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "code": code,
+        "message": message,
+        "errors": List<dynamic>.from(errors.map((x) => x.toJson())),
+        "status": status,
       };
 }
 

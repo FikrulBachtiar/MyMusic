@@ -12,11 +12,9 @@ import 'package:my_music/config/currency_format.dart';
 import 'package:my_music/config/profile_obs.dart';
 import 'package:my_music/model/m_video_list.dart';
 import 'package:my_music/service/s_beranda.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class PlayVideoViewMax extends StatefulWidget {
-  PlayVideoViewMax({super.key, required this.youtubePlayerController});
-  YoutubePlayerController youtubePlayerController;
+  const PlayVideoViewMax({super.key});
 
   @override
   State<PlayVideoViewMax> createState() => _PlayVideoViewMaxState();
@@ -26,18 +24,11 @@ class _PlayVideoViewMaxState extends State<PlayVideoViewMax>
     with SingleTickerProviderStateMixin {
   BerandaObs served = Get.put(BerandaObs());
   ProfileObs servedProfile = Get.put(ProfileObs());
-  final DraggableScrollableController _scrollableController =
-      DraggableScrollableController();
-  late AnimationController _animationController;
   final PagingController<int, ItemVideoList> _pagingController =
       PagingController(firstPageKey: 0);
 
   @override
   void initState() {
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
     _pagingController.addPageRequestListener((page) {
       fetchPage(page);
     });
@@ -67,13 +58,6 @@ class _PlayVideoViewMaxState extends State<PlayVideoViewMax>
   }
 
   @override
-  void dispose() {
-    _scrollableController.dispose();
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -83,46 +67,52 @@ class _PlayVideoViewMaxState extends State<PlayVideoViewMax>
 
   Widget bodys(Size size) {
     return SafeArea(
-      child: Column(
-        children: [
-          YoutubePlayer(
-            controller: widget.youtubePlayerController,
-            showVideoProgressIndicator: true,
-            progressIndicatorColor: Colors.red,
-            onReady: () {},
-            thumbnail: CachedNetworkImage(
-              imageUrl:
-                  served.dataItems.value.snippet?.thumbnails?.standard?.url ??
-                      served.dataItems.value.snippet?.thumbnails?.high!.url ??
-                      "",
-              fit: BoxFit.cover,
-              placeholder: (context, url) {
-                return SizedBox(
-                  width: double.parse(
-                    served.dataItems.value.snippet?.thumbnails?.high?.width
-                            .toString() ??
+      child: Obx(
+        () => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              color: Colors.red,
+              height: served.heightSize.value <= 338
+                  ? served.heightSize.value - 40.0
+                  : 280,
+              width: served.heightSize.value <= 338
+                  ? served.heightSize.value / .6
+                  : size.width,
+              child: CachedNetworkImage(
+                imageUrl:
+                    served.dataItems.value.snippet?.thumbnails?.standard?.url ??
+                        served.dataItems.value.snippet?.thumbnails?.high!.url ??
                         "",
-                  ),
-                  height: 280,
-                );
-              },
+                fit: BoxFit.cover,
+                placeholder: (context, url) {
+                  return SizedBox(
+                    width: double.parse(
+                      served.dataItems.value.snippet?.thumbnails?.high?.width
+                              .toString() ??
+                          "",
+                    ),
+                    height: 280,
+                  );
+                },
+              ),
             ),
-          ),
-          Expanded(
-            child: ScrollConfiguration(
-              behavior: BehaviorComponent(),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    infoVideo(size),
-                    const SizedBox(height: 20),
-                    pagingContent()
-                  ],
+            Expanded(
+              child: ScrollConfiguration(
+                behavior: BehaviorComponent(),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      infoVideo(size),
+                      const SizedBox(height: 20),
+                      pagingContent()
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -283,9 +273,9 @@ class _PlayVideoViewMaxState extends State<PlayVideoViewMax>
                   ],
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  "1,1 jt x ditonton \u2022 1 bln lalu",
-                  style: TextStyle(
+                Text(
+                  "${CurrencyFormat.convertToAbbreviation(served.dataItems.value.statistics?.viewCount ?? "")} x ditonton \u2022 ${CurrencyFormat.convertToDifferentDate(served.dataItems.value.snippet?.publishedAt)}",
+                  style: const TextStyle(
                     fontSize: 12.7,
                     color: kGreyTwo,
                   ),
@@ -359,11 +349,14 @@ class _PlayVideoViewMaxState extends State<PlayVideoViewMax>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                children: const [
-                  Text("Komentar", style: TextStyle(fontSize: 14)),
-                  SizedBox(width: 10),
-                  Text("1,2 rb",
-                      style: TextStyle(color: kGreyTwo, fontSize: 13)),
+                children: [
+                  const Text("Komentar", style: TextStyle(fontSize: 14)),
+                  const SizedBox(width: 10),
+                  Text(
+                    CurrencyFormat.convertToAbbreviation(
+                        served.dataItems.value.statistics?.commentCount ?? ""),
+                    style: const TextStyle(color: kGreyTwo, fontSize: 13),
+                  ),
                 ],
               ),
               const Icon(Icons.keyboard_double_arrow_down_sharp, size: 22),
